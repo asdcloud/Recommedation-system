@@ -76,13 +76,13 @@ class PreprocessData:
         print('finishing on merging')
         train_ratings['negatives'] = train_ratings['negative_items'].apply(lambda x: random.sample(list(x), num_negatives))
         # print(train_ratings)
+
+        # 這邊加入 positive 以及 negative case
         for row in train_ratings.itertuples():
-            print(int(row.userId), int(row.itemId), float(row.rating))
-            # users.append(int(row.userId))
-            # items.append(int(row.itemId))
-            # ratings.append(float(row.rating))
-            for i in range(num_negatives):
-                
+            users.append(int(row.userId))
+            items.append(int(row.itemId))
+            ratings.append(float(row.rating))
+            for i in range(num_negatives):          
                 users.append(int(row.userId))
                 items.append(int(row.negatives[i]))
                 ratings.append(float(0))  # negative samples get 0 rating
@@ -90,16 +90,29 @@ class PreprocessData:
         dataset = UserItemRatingsData(user_tensor=torch.LongTensor(users),
                                         item_tensor=torch.LongTensor(items),
                                         target_tensor=torch.FloatTensor(ratings))
-        # return DataLoader(dataset, batch_size=batch_size, shuffle=True)
-
+        return DataLoader(dataset, batch_size=batch_size, shuffle=True)
+    
+    @property
+    def evaluate_data(self):
+        """create evaluate data"""
+        test_ratings = pd.merge(self.test_ratings, self.negatives[['userId', 'negative_samples']], on='userId')
+        test_users, test_items, negative_users, negative_items = [], [], [], []
+        for row in test_ratings.itertuples():
+            test_users.append(int(row.userId))
+            test_items.append(int(row.itemId))
+            for i in range(len(row.negative_samples)):
+                negative_users.append(int(row.userId))
+                negative_items.append(int(row.negative_samples[i]))
+        return [torch.LongTensor(test_users), torch.LongTensor(test_items), torch.LongTensor(negative_users),
+                torch.LongTensor(negative_items)]
 
 # """
 # test section below:
 
-# """
-data_path = "./res/ml-1m/ratings.csv"
-data = pd.read_csv(data_path)
-# print(data.head())
-test = PreprocessData(data, "implicit").instance_a_train_loader(3, 99)
+# # """
+# data_path = "./res/ml-1m/ratings.csv"
+# data = pd.read_csv(data_path)
+# # print(data.head())
+# test = PreprocessData(data, "implicit").instance_a_train_loader(3, 99)
 
-# test._negative_interaction(data)
+# # test._negative_interaction(data)
