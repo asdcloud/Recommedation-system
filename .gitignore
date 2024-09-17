@@ -1,4 +1,4 @@
 /src/personal/work.description.txt
 /src/personal/test.py
-/src/runs
-/src/checkpoints
+/runs
+/src/personal/__pycache__
