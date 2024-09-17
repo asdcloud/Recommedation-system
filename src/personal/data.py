@@ -22,7 +22,6 @@ class PreprocessData:
         self.user_set = set(self.ratings['userId'].unique()) # list all user
         self.item_set = set(self.ratings['itemId'].unique()) # list all item
         self.negative_case = self._negative_set(ratings)
-        
         if datatype == "implicit":
             self.preprocess_ratings = self._binarize(ratings)
         else:
@@ -73,7 +72,7 @@ class PreprocessData:
     def instance_a_train_loader(self, num_negatives:int, batch_size:int):
         users, items, ratings = [], [], []  # list to tensor
         train_ratings = pd.merge(self.train_ratings, self.negative_case[['userId', 'negative_items']], on='userId')
-        print('finishing on merging')
+        # print('finishing on merging')
         train_ratings['negatives'] = train_ratings['negative_items'].apply(lambda x: random.sample(list(x), num_negatives))
         # print(train_ratings)
 
@@ -86,16 +85,15 @@ class PreprocessData:
                 users.append(int(row.userId))
                 items.append(int(row.negatives[i]))
                 ratings.append(float(0))  # negative samples get 0 rating
-        print('finished')
-        dataset = UserItemRatingsData(user_tensor=torch.LongTensor(users),
-                                        item_tensor=torch.LongTensor(items),
-                                        target_tensor=torch.FloatTensor(ratings))
+        dataset = UserItemRatingsData(userTensor=torch.LongTensor(users),
+                                        itemTensor=torch.LongTensor(items),
+                                        ratingsTensor=torch.FloatTensor(ratings))
         return DataLoader(dataset, batch_size=batch_size, shuffle=True)
     
     @property
     def evaluate_data(self):
         """create evaluate data"""
-        test_ratings = pd.merge(self.test_ratings, self.negatives[['userId', 'negative_samples']], on='userId')
+        test_ratings = pd.merge(self.test_ratings, self.negative_case[['userId', 'negative_samples']], on='userId')
         test_users, test_items, negative_users, negative_items = [], [], [], []
         for row in test_ratings.itertuples():
             test_users.append(int(row.userId))
