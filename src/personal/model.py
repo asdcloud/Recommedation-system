@@ -1,6 +1,6 @@
 import torch
 import torch.nn as nn
-from train import Train
+from engine import Engine
 
 class NeuMF(torch.nn.Module):
     def __init__(self, config):
@@ -60,8 +60,7 @@ class NeuMF(torch.nn.Module):
         rating = self.logistic(logits)
         return rating
 
-
-class NeuMFEngine(Train):
+class NeuMFEngine(Engine):
     def __init__(self, config):
         self.model = NeuMF(config)
         if torch.cuda.is_available():
