@@ -19,7 +19,9 @@ class NeuMF(torch.nn.Module):
 
         # Fully connected layers for MLP
         self.fc_layers = nn.ModuleList()
-        for in_size, out_size in zip(config['layers'][:-1], config['layers'][1:]):
+        input_size = self.latent_dim_mlp * 2  # 8 * 2 = 16
+        layer_sizes = [input_size] + config['layers']  # [16, 64, 32, 16, 8]
+        for in_size, out_size in zip(layer_sizes[:-1], layer_sizes[1:]):
             self.fc_layers.append(nn.Linear(in_size, out_size))
 
         # Output layer

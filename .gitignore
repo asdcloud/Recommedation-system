@@ -2,3 +2,6 @@
 /src/personal/test.py
 /runs
 /src/personal/__pycache__
+/item_id_mapping.pkl
+/user_id_mapping.pkl
+/prediction_results.csv
