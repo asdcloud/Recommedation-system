@@ -104,13 +104,3 @@ class PreprocessData:
         return [torch.LongTensor(test_users), torch.LongTensor(test_items), torch.LongTensor(negative_users),
                 torch.LongTensor(negative_items)]
 
-# """
-# test section below:
-
-# # """
-# data_path = "./res/ml-1m/ratings.csv"
-# data = pd.read_csv(data_path)
-# # print(data.head())
-# test = PreprocessData(data, "implicit").instance_a_train_loader(3, 99)
-
-# # test._negative_interaction(data)
