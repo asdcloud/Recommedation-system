@@ -7,8 +7,6 @@ import openpyxl
 #參數調整
 dist = 3 #距離 整數
 converge = 3 #收斂速度 數字越小收斂程度越高
-
-
 dist_div = 0 # 初始化
 np.set_printoptions(precision=3)
 csvfiles = open('./data/1m/movies.dat', newline='', encoding="ISO-8859-1")
@@ -24,6 +22,7 @@ movies = csv.reader(csvfiles)
 movies_matrix = csvfiles
 tags = []
 tags_group = []
+divation = [[0]]*len(movies_matrix)
 print("csvfiles complete.")
 
 movie_diction = {}
@@ -46,6 +45,7 @@ for i in range(len(movies_matrix)):
 print("movie_matrix complete")
 
 dist_div = len(movies_matrix)/converge #決定要除以多少
+print(len(movies_matrix))
 relation_matrix = np.zeros((len(movies_matrix)-1, len(movies_matrix)-1))
 
 
@@ -90,6 +90,11 @@ with open('./output.csv', 'w', newline='') as csvfile:
   # 寫入二維表格
     writer.writerows(result)
 
+
+
+
+
+
 #接下來是CF部分 
 current_timestamp = round(time.time(), 0) #知道現在的時間是多少
 csvfiles = open('./data/1m/ratings.dat', newline='', encoding="ISO-8859-1")
@@ -109,9 +114,10 @@ for i in range(1, len(ratings_matrix_rand)):
     if ratings_matrix_rand[i][3] == "timestamp":
         continue
     rating_time = int(ratings_matrix_rand[i][3])
+    ##divation[movie_diction[ratings_matrix_rand[i][1]]] = np.append(divation[movie_diction[ratings_matrix_rand[i][1]]], float(ratings_matrix_rand[i][2]))
+    print(float(ratings_matrix_rand[i][2]))
     for j in range(len(relation_matrix)):
         if (movie_diction[ratings_matrix_rand[i][1]] == j):
-            scale = round(rating_time/current_timestamp, 1)
             movies_matrix[j+1][3][0] += (float(ratings_matrix_rand[i][2]) * scale)
             movies_matrix[j+1][3][1] += scale
         else:
@@ -151,8 +157,9 @@ with open('./outputRating_rand.csv', 'w', newline='') as csvfile:
     for i in range(1, len(movies_matrix)):
         if (movies_matrix[i][3][1] == 0):
             continue
-        writer.writerow([movies_matrix[i][0], movies_matrix[i][3][0], movies_matrix[i][3][1], movies_matrix[i][3][0]/movies_matrix[i][3][1]])
+        ##popu_std = np.std(divation[i])
 
+        writer.writerow([movies_matrix[i][0], movies_matrix[i][3][0], movies_matrix[i][3][1], movies_matrix[i][3][0]/movies_matrix[i][3][1]])
 '''
 temparr = []
 for i in range(1,len(movies_matrix)):
